@@ -14,15 +14,18 @@ import { cn } from '../../lib/utils'
  * header). Theme is pinned to light via ?theme=light so the screenshot
  * looks the same for every visitor regardless of their own OS preference.
  *
- * pointer-events-none on the iframe is deliberate: this is a screenshot,
- * not a playable demo. Without it, a visitor's mouse wheel scrolls the
- * iframe's *own* internal page the instant the cursor passes over it while
- * scrolling the landing page — leaving the "screenshot" stuck mid-scroll
- * (e.g. skipping straight past the chart to the transaction list) instead
- * of showing the top of the real screen.
+ * Click-to-activate (same pattern Google Maps embeds use): until clicked,
+ * a transparent overlay sits in front of the iframe, so the visitor's
+ * mouse wheel scrolls the *landing page* like normal — an iframe is its
+ * own scrollable document, so without this a wheel event over it scrolls
+ * the demo's own internal page instead, leaving it stuck mid-scroll (e.g.
+ * skipping past a chart straight to a list) for the rest of the visit.
+ * A click "arms" it, restoring full clicking/scrolling inside the demo
+ * until the cursor leaves the frame.
  */
 export function AppFrame({ path, className }: { path: string; className?: string }) {
   const [loaded, setLoaded] = useState(false)
+  const [active, setActive] = useState(false)
 
   return (
     <div className={cn('relative mx-auto w-[320px] shrink-0 sm:w-[380px]', className)}>
@@ -42,7 +45,7 @@ export function AppFrame({ path, className }: { path: string; className?: string
               <div className="h-[20px] w-[76px] rounded-full bg-black" />
             </div>
 
-            <div className="relative min-h-0 flex-1">
+            <div className="relative min-h-0 flex-1" onMouseLeave={() => setActive(false)}>
               {!loaded && <div className="absolute inset-0 animate-pulse bg-white" />}
               <iframe
                 src={`/app-demo/index.html?screen=${encodeURIComponent(path)}&theme=light`}
@@ -50,8 +53,20 @@ export function AppFrame({ path, className }: { path: string; className?: string
                 loading="lazy"
                 tabIndex={-1}
                 onLoad={() => setLoaded(true)}
-                className="pointer-events-none h-full w-full border-0"
+                className={cn('h-full w-full border-0', !active && 'pointer-events-none')}
               />
+              {!active && (
+                <button
+                  type="button"
+                  onClick={() => setActive(true)}
+                  aria-label="Try this screen"
+                  className="group absolute inset-0 cursor-pointer bg-transparent"
+                >
+                  <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+                    Tap to try it
+                  </span>
+                </button>
+              )}
             </div>
           </div>
         </div>
