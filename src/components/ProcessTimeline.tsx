@@ -11,7 +11,7 @@ export function ProcessTimeline({ children }: { children: ReactNode }) {
 
   return (
     <section id="process" ref={ref} className="relative">
-      <div className="mx-auto max-w-3xl px-6">
+      <div className="mx-auto max-w-6xl px-6">
         <div className="relative">
           <div className="absolute top-2 bottom-2 left-6 w-px bg-border sm:left-7" />
           <motion.div className="absolute top-2 left-6 w-px bg-gradient-to-b from-blue via-purple to-green sm:left-7" style={{ height }} />
