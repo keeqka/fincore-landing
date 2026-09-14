@@ -69,8 +69,13 @@ export function AppFrame({ path, className }: { path: string; className?: string
         <span className="absolute -left-px top-[112px] h-9 w-[3px] rounded-l-sm bg-[#3a3a3c]" aria-hidden />
         <span className="absolute -left-px top-[150px] h-9 w-[3px] rounded-l-sm bg-[#3a3a3c]" aria-hidden />
 
-        <div className="aspect-[375/812] w-full overflow-hidden rounded-[2.6rem] bg-black p-[3px]">
-          <div ref={screenRef} className="relative h-full w-full overflow-hidden rounded-[2.4rem] bg-white">
+        <div className="w-full overflow-hidden rounded-[2.6rem] bg-black p-[3px]">
+          {/* aspect-ratio lives HERE, on the exact box scale is measured off — not on the padded
+              ancestor above. That box's own height must be width*(812/375) with no padding in the
+              way, or it ends up a few px taller than the scaled content actually fits, leaving a
+              sliver of this div's own white background exposed past the content's bottom edge —
+              square corners poking out past the frame's rounded ones. */}
+          <div ref={screenRef} className="relative aspect-[375/812] w-full overflow-hidden rounded-[2.4rem] bg-white">
             {/* Scale is measured off THIS box, not a padded ancestor — the scaled child below must fit exactly inside it, or overflow-hidden clips a few px off every edge (it did: the leftmost/rightmost tab-bar icons were getting shaved off). */}
             {/* Rendered at native phone size, then scaled down as one unit to fit the frame — the app inside never sees a narrower viewport than a real phone actually has. */}
             <div
