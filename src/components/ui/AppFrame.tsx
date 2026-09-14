@@ -13,12 +13,19 @@ import { cn } from '../../lib/utils'
  * island directly on the iframe just covers real content (the app's own
  * header). Theme is pinned to light via ?theme=light so the screenshot
  * looks the same for every visitor regardless of their own OS preference.
+ *
+ * pointer-events-none on the iframe is deliberate: this is a screenshot,
+ * not a playable demo. Without it, a visitor's mouse wheel scrolls the
+ * iframe's *own* internal page the instant the cursor passes over it while
+ * scrolling the landing page — leaving the "screenshot" stuck mid-scroll
+ * (e.g. skipping straight past the chart to the transaction list) instead
+ * of showing the top of the real screen.
  */
 export function AppFrame({ path, className }: { path: string; className?: string }) {
   const [loaded, setLoaded] = useState(false)
 
   return (
-    <div className={cn('relative mx-auto w-[300px] shrink-0 sm:w-[340px]', className)}>
+    <div className={cn('relative mx-auto w-[320px] shrink-0 sm:w-[380px]', className)}>
       <div className="absolute -inset-4 rounded-[3.5rem] bg-gradient-to-b from-blue/20 to-purple/20 blur-2xl" aria-hidden />
 
       {/* Titanium-style edge — every decorative piece below is positioned relative to this one box. */}
@@ -41,8 +48,9 @@ export function AppFrame({ path, className }: { path: string; className?: string
                 src={`/app-demo/index.html?screen=${encodeURIComponent(path)}&theme=light`}
                 title={`FinCore AI — ${path}`}
                 loading="lazy"
+                tabIndex={-1}
                 onLoad={() => setLoaded(true)}
-                className="h-full w-full border-0"
+                className="pointer-events-none h-full w-full border-0"
               />
             </div>
           </div>
