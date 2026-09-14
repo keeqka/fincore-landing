@@ -29,7 +29,7 @@ const NATIVE_HEIGHT = 812
  * looks the same for every visitor regardless of their own OS preference.
  *
  * Click-to-activate (same pattern Google Maps embeds use): until clicked,
- * a transparent overlay sits in front of the iframe, so the visitor's
+ * a translucent overlay sits in front of the iframe, so the visitor's
  * mouse wheel scrolls the *landing page* like normal — an iframe is its
  * own scrollable document, so without this a wheel event over it scrolls
  * the demo's own internal page instead, leaving it stuck mid-scroll (e.g.
@@ -98,17 +98,29 @@ export function AppFrame({ path, className }: { path: string; className?: string
                   className={cn('h-full w-full border-0', !active && 'pointer-events-none')}
                 />
                 {!active && (
-                  <button
-                    type="button"
+                  // A <div>, not a <button> — a native button here picked up the browser's
+                  // default UA rendering/focus box, which showed through as square corners
+                  // poking past this rounded screen. role="button" + a key handler keep it
+                  // just as operable without any of that native chrome.
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setActive(true)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setActive(true)
+                      }
+                    }}
                     aria-label="Try this screen"
-                    className="group absolute inset-0 cursor-pointer bg-transparent outline-none"
+                    className="absolute inset-0 cursor-pointer bg-black/15 transition-colors hover:bg-black/25"
                   >
-                    {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI. The middle is the one spot no route pins persistent chrome to. */}
-                    <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+                    {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI. The middle is the one spot no route pins persistent chrome to.
+                        Always visible, not hover-only — touch devices have no hover, so a hover-only hint would never show on the phones this is meant to represent. */}
+                    <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white backdrop-blur">
                       Tap to try it
                     </span>
-                  </button>
+                  </div>
                 )}
               </div>
             </div>
