@@ -12,10 +12,14 @@ export function Button({
   variant?: 'primary' | 'ghost'
   className?: string
 }) {
+  const external = href.startsWith('http')
+  const externalProps = external ? { target: '_blank', rel: 'noreferrer' } : {}
+
   if (variant === 'ghost') {
     return (
       <a
         href={href}
+        {...externalProps}
         className={cn(
           'inline-flex items-center justify-center gap-2 rounded-full border border-border-strong px-6 py-3 text-sm font-medium text-ink',
           'transition-colors hover:border-white/30 hover:bg-white/5',
@@ -29,6 +33,7 @@ export function Button({
   return (
     <a
       href={href}
+      {...externalProps}
       className={cn(
         'group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3.5 text-sm font-semibold text-white',
         'shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_10px_30px_-6px_rgba(91,140,255,0.55)]',

@@ -1,0 +1,5 @@
+# The embedded app demo (public/app-demo) is a real build of the actual
+# Telegram Mini App in mock-data mode, using React Router's BrowserRouter —
+# deep links like /app-demo/chat need this SPA fallback or a hard refresh
+# (or a direct iframe src) 404s.
+/app-demo/*  /app-demo/index.html  200

@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react'
 import { Button } from './ui/Button'
+import { TELEGRAM_BOT_URL } from '../lib/constants'
 
 export function Header() {
   return (
@@ -24,7 +25,7 @@ export function Header() {
           </a>
         </nav>
 
-        <Button href="#cta" className="!px-3.5 !py-2 text-xs sm:!px-5 sm:!py-2.5 sm:text-sm">
+        <Button href={TELEGRAM_BOT_URL} className="!px-3.5 !py-2 text-xs sm:!px-5 sm:!py-2.5 sm:text-sm">
           Open in Telegram
         </Button>
       </div>

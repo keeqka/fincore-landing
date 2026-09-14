@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, MessageCircle } from 'lucide-react'
 import { Button } from './ui/Button'
 import { Glow } from './ui/Glow'
+import { TELEGRAM_BOT_URL } from '../lib/constants'
 
 export function Hero() {
   return (
@@ -50,7 +51,7 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.3 }}
           className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
-          <Button href="#cta">
+          <Button href={TELEGRAM_BOT_URL}>
             <MessageCircle className="h-4 w-4" />
             Open in Telegram
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

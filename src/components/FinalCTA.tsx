@@ -2,6 +2,7 @@ import { ArrowRight, MessageCircle } from 'lucide-react'
 import { Reveal } from './ui/Reveal'
 import { Button } from './ui/Button'
 import { Glow } from './ui/Glow'
+import { TELEGRAM_BOT_URL } from '../lib/constants'
 
 export function FinalCTA() {
   return (
@@ -18,7 +19,7 @@ export function FinalCTA() {
             Open the bot, log your first debt, or send a photo of a receipt — the AI handles the rest.
           </p>
           <div className="mt-9 flex justify-center">
-            <Button href="#top" className="!px-9 !py-4 text-base">
+            <Button href={TELEGRAM_BOT_URL} className="!px-9 !py-4 text-base">
               <MessageCircle className="h-4.5 w-4.5" />
               Open in Telegram
               <ArrowRight className="h-4.5 w-4.5" />
