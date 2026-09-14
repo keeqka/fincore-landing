@@ -125,7 +125,7 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
         // band, so the empty space lands above it, clear of the top corner curve, instead of
         // the row itself sitting flush against it.
         <div
-          className="relative z-10 flex w-full shrink-0 flex-col justify-end bg-white/85 backdrop-blur-md"
+          className="relative z-10 flex w-full shrink-0 flex-col justify-end bg-white/85"
           style={{ height: STATUS_BAR_HEIGHT }}
         >
           <div className="relative flex items-center justify-between px-6 pb-1.5 text-[13px] font-semibold text-black">
@@ -155,7 +155,7 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
 
       {bezel && (
         <div
-          className="relative z-10 flex w-full shrink-0 items-center justify-center bg-white/85 backdrop-blur-md"
+          className="relative z-10 flex w-full shrink-0 items-center justify-center bg-white/85"
           style={{ height: HOME_INDICATOR_HEIGHT }}
         >
           <div className="h-[4px] w-[110px] rounded-full bg-black/80" />
