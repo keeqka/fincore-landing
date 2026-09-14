@@ -1,5 +1,19 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { cn } from '../../lib/utils'
+
+/**
+ * The real app is genuinely responsive, but no real phone has a CSS
+ * viewport narrower than this (iPhone SE 2020 / 375×812 — the de facto
+ * "smallest realistic phone" baseline). The decorative frame below can be
+ * drawn much smaller than that for the landing page's layout, but the
+ * *iframe itself* must never be told it's narrower than a real device
+ * would ever be — that's an impossible rendering condition, not a real
+ * bug, and it broke things (e.g. the category chart's legend) that are
+ * fine on every actual phone. So the iframe always renders at this native
+ * size, and the whole thing is scaled down visually to fit the frame.
+ */
+const NATIVE_WIDTH = 375
+const NATIVE_HEIGHT = 812
 
 /**
  * Embeds a real screen of the actual product (built in mock-data mode,
@@ -26,6 +40,18 @@ import { cn } from '../../lib/utils'
 export function AppFrame({ path, className }: { path: string; className?: string }) {
   const [loaded, setLoaded] = useState(false)
   const [active, setActive] = useState(false)
+  const screenRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(0)
+
+  useLayoutEffect(() => {
+    const el = screenRef.current
+    if (!el) return
+    const update = () => setScale(el.clientWidth / NATIVE_WIDTH)
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   return (
     <div
@@ -43,36 +69,43 @@ export function AppFrame({ path, className }: { path: string; className?: string
         <span className="absolute -left-px top-[112px] h-9 w-[3px] rounded-l-sm bg-[#3a3a3c]" aria-hidden />
         <span className="absolute -left-px top-[150px] h-9 w-[3px] rounded-l-sm bg-[#3a3a3c]" aria-hidden />
 
-        <div className="flex aspect-[9/19.5] w-full flex-col overflow-hidden rounded-[2.6rem] bg-black p-[3px]">
-          <div className="flex h-full w-full flex-col overflow-hidden rounded-[2.4rem] bg-white">
-            {/* Status bar — reserved space, the island sits here, never over real content */}
-            <div className="relative z-10 flex h-8 w-full shrink-0 items-center justify-center bg-white">
-              <div className="h-[20px] w-[76px] rounded-full bg-black" />
-            </div>
+        <div className="aspect-[375/812] w-full overflow-hidden rounded-[2.6rem] bg-black p-[3px]">
+          <div ref={screenRef} className="relative h-full w-full overflow-hidden rounded-[2.4rem] bg-white">
+            {/* Scale is measured off THIS box, not a padded ancestor — the scaled child below must fit exactly inside it, or overflow-hidden clips a few px off every edge (it did: the leftmost/rightmost tab-bar icons were getting shaved off). */}
+            {/* Rendered at native phone size, then scaled down as one unit to fit the frame — the app inside never sees a narrower viewport than a real phone actually has. */}
+            <div
+              className="absolute top-0 left-0 flex origin-top-left flex-col"
+              style={{ width: NATIVE_WIDTH, height: NATIVE_HEIGHT, transform: `scale(${scale})`, opacity: scale ? 1 : 0 }}
+            >
+              {/* Status bar — reserved space, the island sits here, never over real content */}
+              <div className="relative z-10 flex h-8 w-full shrink-0 items-center justify-center bg-white">
+                <div className="h-[20px] w-[76px] rounded-full bg-black" />
+              </div>
 
-            <div className="relative min-h-0 flex-1" onMouseLeave={() => setActive(false)}>
-              {!loaded && <div className="absolute inset-0 animate-pulse bg-white" />}
-              <iframe
-                src={`/app-demo/index.html?screen=${encodeURIComponent(path)}&theme=light`}
-                title={`FinCore AI — ${path}`}
-                loading="lazy"
-                tabIndex={-1}
-                onLoad={() => setLoaded(true)}
-                className={cn('h-full w-full border-0', !active && 'pointer-events-none')}
-              />
-              {!active && (
-                <button
-                  type="button"
-                  onClick={() => setActive(true)}
-                  aria-label="Try this screen"
-                  className="group absolute inset-0 cursor-pointer bg-transparent"
-                >
-                  {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI (this used to cover the tab bar's own labels). The middle of the screen is the one spot no route pins persistent chrome to. */}
-                  <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
-                    Tap to try it
-                  </span>
-                </button>
-              )}
+              <div className="relative min-h-0 flex-1" onMouseLeave={() => setActive(false)}>
+                {!loaded && <div className="absolute inset-0 animate-pulse bg-white" />}
+                <iframe
+                  src={`/app-demo/index.html?screen=${encodeURIComponent(path)}&theme=light`}
+                  title={`FinCore AI — ${path}`}
+                  loading="lazy"
+                  tabIndex={-1}
+                  onLoad={() => setLoaded(true)}
+                  className={cn('h-full w-full border-0', !active && 'pointer-events-none')}
+                />
+                {!active && (
+                  <button
+                    type="button"
+                    onClick={() => setActive(true)}
+                    aria-label="Try this screen"
+                    className="group absolute inset-0 cursor-pointer bg-transparent"
+                  >
+                    {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI. The middle is the one spot no route pins persistent chrome to. */}
+                    <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+                      Tap to try it
+                    </span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
