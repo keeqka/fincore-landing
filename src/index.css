@@ -1,0 +1,116 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist/wght-italic.css';
+
+@theme {
+  --font-sans: 'Geist Variable', system-ui, sans-serif;
+
+  --color-bg: #050509;
+  --color-bg-soft: #0a0a12;
+  --color-surface: #0d0e16;
+  --color-surface-2: #12131d;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-ink: #f3f2f7;
+  --color-muted: #8d8ba0;
+  --color-faint: #55536a;
+
+  --color-blue: #5b8cff;
+  --color-blue-soft: #8fb3ff;
+  --color-purple: #a15bff;
+  --color-purple-soft: #c79bff;
+  --color-green: #4ade80;
+
+  --animate-scan: scan 2.6s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-2%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(102%);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+html {
+  color-scheme: dark;
+  scroll-snap-type: y mandatory;
+}
+
+/* One block = one screen. scroll-snap-stop:always is the part that makes it
+   crisp — without it a fast flick can sail past a snap point entirely. */
+.block-snap {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  scroll-margin-top: 4.5rem; /* header height — so the snap point lands right below the fixed header, not under it */
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-purple);
+  color: #08060d;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Fine noise texture so the flat dark background reads as premium, not flat */
+.bg-noise {
+  position: relative;
+}
+.bg-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.glow-line {
+  background: linear-gradient(to bottom, transparent, var(--color-blue) 15%, var(--color-purple) 85%, transparent);
+}
