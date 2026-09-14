@@ -12,7 +12,7 @@ export function SceneForecast() {
       tone="purple"
     >
       <div className="flex flex-col items-center gap-3">
-        <AppFrame path="/debts" bezel={false} />
+        <AppFrame path="/debts" />
         <span className="inline-flex items-center gap-1.5 rounded-full border border-border-strong bg-white/5 px-3 py-1 text-[11px] font-medium text-muted">
           <Sparkles className="h-3 w-3 text-purple-soft" />
           The real app, not a mockup

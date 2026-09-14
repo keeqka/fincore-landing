@@ -21,7 +21,7 @@ export function SceneEngine() {
       tone="purple"
     >
       <div className="grid gap-10 sm:grid-cols-[auto_1fr] sm:items-center">
-        <AppFrame path="/finances" bezel={false} />
+        <AppFrame path="/finances" />
 
         <Card className="p-6 sm:p-8">
           <motion.ol

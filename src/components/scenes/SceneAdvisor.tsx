@@ -12,7 +12,7 @@ export function SceneAdvisor() {
       tone="blue"
     >
       <div className="flex flex-col items-center gap-3">
-        <AppFrame path="/chat" bezel={false} />
+        <AppFrame path="/chat" />
         <span className="inline-flex items-center gap-1.5 rounded-full border border-border-strong bg-white/5 px-3 py-1 text-[11px] font-medium text-muted">
           <Sparkles className="h-3 w-3 text-blue-soft" />
           The real app, not a mockup

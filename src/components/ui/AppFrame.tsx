@@ -18,11 +18,12 @@ const STATUS_BAR_HEIGHT = 32
 
 /**
  * Embeds a real screen of the actual product (built in mock-data mode, see
- * public/app-demo) — not a hand-drawn mockup, so it never drifts out of
- * sync with the real UI after a redesign. `path` is a route in that app,
- * e.g. "/chat" or "/debts". Set `bezel={false}` for a plain rounded card
- * with no iPhone chrome (no titanium edge, no Dynamic Island) — same glow,
- * shadow, and tap-to-try behavior, just without the phone around it.
+ * public/app-demo) inside an iPhone Pro-style bezel — not a hand-drawn
+ * mockup, so it never drifts out of sync with the real UI after a redesign.
+ * `path` is a route in that app, e.g. "/chat" or "/debts". Set
+ * `bezel={false}` for a plain rounded card with no iPhone chrome (no
+ * titanium edge, no Dynamic Island) — same glow, shadow, and tap-to-try
+ * behavior, just without the phone around it.
  *
  * The Dynamic Island (bezel mode only) lives in its own reserved status-bar
  * strip above the iframe, never on top of it — the embedded page has no way
@@ -79,32 +80,37 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
           onLoad={() => setLoaded(true)}
           className={cn('h-full w-full border-0', !active && 'pointer-events-none')}
         />
-        {!active && (
-          // A <div>, not a <button> — a native button here picked up the browser's
-          // default UA rendering/focus box, which showed through as square corners
-          // poking past this rounded screen. role="button" + a key handler keep it
-          // just as operable without any of that native chrome.
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => setActive(true)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                setActive(true)
-              }
-            }}
-            aria-label="Try this screen"
-            className="absolute inset-0 cursor-pointer"
-          >
-            {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI. The middle is the one spot no route pins persistent chrome to.
-                Always visible, not hover-only — touch devices have no hover, so a hover-only hint would never show on the phones this is meant to represent.
-                Only the badge itself carries a dark backing — tinting the whole screen behind it made the demo underneath look muddy/washed out. */}
-            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white shadow-lg backdrop-blur">
-              Tap to try it
-            </span>
-          </div>
-        )}
+        {/* Always mounted (not conditionally on !active) so the fade-out below is an actual
+            transition, not a hard cut. pointer-events-none + opacity-0 take over post-activation,
+            and aria-hidden/tabIndex -1 pull it out of the accessibility tree once it's inert.
+            A <div>, not a <button> — a native button here picked up the browser's default UA
+            rendering/focus box, which showed through as square corners poking past this rounded
+            screen. role="button" + a key handler keep it just as operable without that chrome. */}
+        <div
+          role="button"
+          tabIndex={active ? -1 : 0}
+          aria-hidden={active}
+          onClick={() => setActive(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setActive(true)
+            }
+          }}
+          aria-label="Try this screen"
+          className={cn(
+            // Frosted glass, not a flat scrim — the demo underneath should still read through it,
+            // just softened, so the hint doesn't look like an error overlay sitting on the app.
+            'absolute inset-0 cursor-pointer bg-white/10 backdrop-blur-[2px] transition-opacity duration-300 ease-out',
+            active ? 'pointer-events-none opacity-0' : 'opacity-100',
+          )}
+        >
+          {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI. The middle is the one spot no route pins persistent chrome to.
+              Always visible, not hover-only — touch devices have no hover, so a hover-only hint would never show on the phones this is meant to represent. */}
+          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white shadow-lg backdrop-blur">
+            Tap to try it
+          </span>
+        </div>
       </div>
     </div>
   )
