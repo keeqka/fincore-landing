@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from '../../lib/utils'
 
 /**
@@ -22,8 +22,8 @@ const STATUS_BAR_HEIGHT = 32
  * mockup, so it never drifts out of sync with the real UI after a redesign.
  * `path` is a route in that app, e.g. "/chat" or "/debts". Set
  * `bezel={false}` for a plain rounded card with no iPhone chrome (no
- * titanium edge, no Dynamic Island) — same glow, shadow, and tap-to-try
- * behavior, just without the phone around it.
+ * titanium edge, no Dynamic Island) — same glow and shadow, just without
+ * the phone around it.
  *
  * The Dynamic Island (bezel mode only) lives in its own reserved status-bar
  * strip above the iframe, never on top of it — the embedded page has no way
@@ -33,19 +33,20 @@ const STATUS_BAR_HEIGHT = 32
  * screenshot looks the same for every visitor regardless of their own OS
  * preference.
  *
- * Click-to-activate (same pattern Google Maps embeds use): until clicked,
- * a translucent overlay sits in front of the iframe, so the visitor's
- * mouse wheel scrolls the *landing page* like normal — an iframe is its
- * own scrollable document, so without this a wheel event over it scrolls
- * the demo's own internal page instead, leaving it stuck mid-scroll (e.g.
- * skipping past a chart straight to a list) for the rest of the visit.
- * A click "arms" it, restoring full clicking/scrolling inside the demo
- * until the cursor leaves the frame.
+ * The iframe is interactive from the start — no click-to-activate gate.
+ * That gate used to exist because an iframe is its own scrollable document:
+ * a visitor's mouse wheel over it would scroll the *demo's* page instead of
+ * the landing page around it, leaving it stuck mid-scroll. Fixed at the
+ * source instead — the embedded app (see home/app's main.tsx, gated on
+ * ?embedded=1) swallows its own wheel events and posts the delta up via
+ * postMessage; the listener below applies that scroll to this page. From
+ * the visitor's side it now just scrolls through, like a screenshot would,
+ * while every tap/click still reaches the real app immediately.
  */
 export function AppFrame({ path, className, bezel = true }: { path: string; className?: string; bezel?: boolean }) {
   const [loaded, setLoaded] = useState(false)
-  const [active, setActive] = useState(false)
   const screenRef = useRef<HTMLDivElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
   const [scale, setScale] = useState(0)
 
   useLayoutEffect(() => {
@@ -56,6 +57,16 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
     const ro = new ResizeObserver(update)
     ro.observe(el)
     return () => ro.disconnect()
+  }, [])
+
+  useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      if (e.source !== iframeRef.current?.contentWindow) return
+      if (e.data?.type !== 'fincore-demo-scroll' || typeof e.data.deltaY !== 'number') return
+      window.scrollBy({ top: e.data.deltaY })
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
   }, [])
 
   const screen = (
@@ -70,54 +81,29 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
         </div>
       )}
 
-      <div className="relative min-h-0 flex-1" onMouseLeave={() => setActive(false)}>
+      <div className="relative min-h-0 flex-1">
         {!loaded && <div className="absolute inset-0 animate-pulse bg-white" />}
         <iframe
-          src={`/app-demo/index.html?screen=${encodeURIComponent(path)}&theme=light`}
+          ref={iframeRef}
+          src={`/app-demo/index.html?screen=${encodeURIComponent(path)}&theme=light&embedded=1`}
           title={`FinCore AI — ${path}`}
           loading="lazy"
           tabIndex={-1}
           onLoad={() => setLoaded(true)}
-          className={cn('h-full w-full border-0', !active && 'pointer-events-none')}
+          className="h-full w-full border-0"
         />
-        {/* Always mounted (not conditionally on !active) so the fade-out below is an actual
-            transition, not a hard cut. pointer-events-none + opacity-0 take over post-activation,
-            and aria-hidden/tabIndex -1 pull it out of the accessibility tree once it's inert.
-            A <div>, not a <button> — a native button here picked up the browser's default UA
-            rendering/focus box, which showed through as square corners poking past this rounded
-            screen. role="button" + a key handler keep it just as operable without that chrome. */}
-        <div
-          role="button"
-          tabIndex={active ? -1 : 0}
-          aria-hidden={active}
-          onClick={() => setActive(true)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              setActive(true)
-            }
-          }}
-          aria-label="Try this screen"
-          className={cn(
-            // Frosted glass, not a flat scrim — the demo underneath should still read through it,
-            // just softened, so the hint doesn't look like an error overlay sitting on the app.
-            'absolute inset-0 cursor-pointer bg-white/10 backdrop-blur-[2px] transition-opacity duration-300 ease-out',
-            active ? 'pointer-events-none opacity-0' : 'opacity-100',
-          )}
-        >
-          {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI. The middle is the one spot no route pins persistent chrome to.
-              Always visible, not hover-only — touch devices have no hover, so a hover-only hint would never show on the phones this is meant to represent. */}
-          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white shadow-lg backdrop-blur">
-            Tap to try it
-          </span>
-        </div>
       </div>
     </div>
   )
 
+  const wrapperClassName = cn(
+    'relative mx-auto w-[min(230px,calc(100vw-140px))] shrink-0 sm:w-[min(280px,calc(100vw-260px))]',
+    className,
+  )
+
   if (!bezel) {
     return (
-      <div className={cn('relative mx-auto w-[min(230px,calc(100vw-140px))] shrink-0 sm:w-[min(280px,calc(100vw-260px))]', className)}>
+      <div className={wrapperClassName}>
         <div className="absolute -inset-3 rounded-[2.5rem] bg-gradient-to-b from-blue/20 to-purple/20 blur-2xl" aria-hidden />
         {/* aspect-ratio lives on the same box scale is measured off, so the scaled content always
             fits it exactly — see the bezel branch below for why that matters (it didn't, once). */}
@@ -129,12 +115,7 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
   }
 
   return (
-    <div
-      className={cn(
-        'relative mx-auto w-[min(230px,calc(100vw-140px))] shrink-0 sm:w-[min(280px,calc(100vw-260px))]',
-        className,
-      )}
-    >
+    <div className={wrapperClassName}>
       <div className="absolute -inset-4 rounded-[3.5rem] bg-gradient-to-b from-blue/20 to-purple/20 blur-2xl" aria-hidden />
 
       {/* Titanium-style edge — every decorative piece below is positioned relative to this one box. */}
