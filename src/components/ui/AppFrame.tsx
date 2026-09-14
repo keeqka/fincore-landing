@@ -1,6 +1,40 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { BatteryFull, SignalHigh, Wifi } from 'lucide-react'
 import { cn } from '../../lib/utils'
+
+// Generic outline icons (lucide's Signal/Wifi/Battery) read as generic app
+// icons, not the specific iOS glyphs visitors recognize at a glance — hand-
+// drawn to match the real shapes instead: ascending signal bars, a filled
+// wifi arc, a battery pill with a cap. Sized for the native 13px status-bar row.
+function SignalGlyph() {
+  return (
+    <svg width="17" height="11" viewBox="0 0 17 11" fill="black" aria-hidden>
+      <rect x="0" y="7" width="3" height="4" rx="0.6" />
+      <rect x="4.5" y="5" width="3" height="6" rx="0.6" />
+      <rect x="9" y="2.5" width="3" height="8.5" rx="0.6" />
+      <rect x="13.5" y="0" width="3" height="11" rx="0.6" />
+    </svg>
+  )
+}
+
+function WifiGlyph() {
+  return (
+    <svg width="15" height="11" viewBox="0 0 15 11" fill="black" aria-hidden>
+      <path d="M7.5 11a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6Z" />
+      <path d="M4.1 6.7a4.9 4.9 0 0 1 6.8 0L9.4 8.2a2.6 2.6 0 0 0-3.8 0L4.1 6.7Z" />
+      <path d="M1.2 3.7a9 9 0 0 1 12.6 0l-1.5 1.5a6.8 6.8 0 0 0-9.6 0L1.2 3.7Z" />
+    </svg>
+  )
+}
+
+function BatteryGlyph() {
+  return (
+    <svg width="25" height="12" viewBox="0 0 25 12" fill="none" aria-hidden>
+      <rect x="0.75" y="0.75" width="21" height="10.5" rx="2.75" stroke="black" strokeOpacity="0.35" strokeWidth="1" />
+      <rect x="2.25" y="2.25" width="18" height="7.5" rx="1.5" fill="black" />
+      <rect x="22.5" y="4" width="1.5" height="4" rx="0.75" fill="black" fillOpacity="0.4" />
+    </svg>
+  )
+}
 
 /**
  * The real app is genuinely responsive, but no real phone has a CSS
@@ -16,14 +50,11 @@ import { cn } from '../../lib/utils'
 const NATIVE_WIDTH = 375
 const NATIVE_HEIGHT = 812
 const STATUS_BAR_HEIGHT = 32
-// Reserved blank strip below the app's own content, bezel mode only. The
-// screen's corner radius (2.4rem in *frame* pixels) is much bigger in
-// *native* pixels once you divide out the scale-down factor — big enough
-// that the real app's bottom tab bar, sitting flush against the native
-// edge, had its outer icons/labels clipped by the curve. A real iPhone
-// reserves exactly this kind of home-indicator safe area at the bottom;
-// this fakes the same thing so the tab bar always clears the corner.
-const HOME_INDICATOR_HEIGHT = 56
+// Reserved blank strip below the app's own content, bezel mode only — same
+// idea as the status-bar reservation above (a real iPhone carves out a home-
+// indicator safe area here too), just enough to clear the screen's own
+// corner radius so the tab bar's outer icons/labels don't clip into it.
+const HOME_INDICATOR_HEIGHT = 20
 
 /**
  * Embeds a real screen of the actual product (built in mock-data mode, see
@@ -94,9 +125,9 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
           <span>9:41</span>
           <div className="absolute top-1/2 left-1/2 h-[20px] w-[76px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black" />
           <div className="flex items-center gap-1.5">
-            <SignalHigh className="h-3.5 w-3.5" strokeWidth={2.5} />
-            <Wifi className="h-3.5 w-3.5" strokeWidth={2.5} />
-            <BatteryFull className="h-4 w-4" strokeWidth={2} />
+            <SignalGlyph />
+            <WifiGlyph />
+            <BatteryGlyph />
           </div>
         </div>
       )}
@@ -116,7 +147,7 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
 
       {bezel && (
         <div className="relative z-10 flex w-full shrink-0 items-center justify-center bg-white" style={{ height: HOME_INDICATOR_HEIGHT }}>
-          <div className="h-[5px] w-[134px] rounded-full bg-black/80" />
+          <div className="h-[4px] w-[110px] rounded-full bg-black/80" />
         </div>
       )}
     </div>
