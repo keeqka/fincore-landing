@@ -49,7 +49,10 @@ function BatteryGlyph() {
  */
 const NATIVE_WIDTH = 375
 const NATIVE_HEIGHT = 812
-const STATUS_BAR_HEIGHT = 32
+// Taller than the status row itself (~20px) needs to be — the extra room
+// above it is what keeps the time/icons clear of the screen's own top
+// corner radius instead of sitting flush against the curve.
+const STATUS_BAR_HEIGHT = 44
 // Reserved blank strip below the app's own content, bezel mode only — same
 // idea as the status-bar reservation above (a real iPhone carves out a home-
 // indicator safe area here too), just enough to clear the screen's own
@@ -118,16 +121,21 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
         // Status bar — reserved space, the island sits here, never over real content.
         // Icons are static (always "9:41", full battery) — this is a fixed mockup, not
         // a live device, and a real iPhone status bar always reads that way in marketing shots.
+        // flex-col justify-end anchors the actual row to the bottom of the taller reserved
+        // band, so the empty space lands above it, clear of the top corner curve, instead of
+        // the row itself sitting flush against it.
         <div
-          className="relative z-10 flex w-full shrink-0 items-center justify-between bg-white px-6 text-[13px] font-semibold text-black"
+          className="relative z-10 flex w-full shrink-0 flex-col justify-end bg-white/85 backdrop-blur-md"
           style={{ height: STATUS_BAR_HEIGHT }}
         >
-          <span>9:41</span>
-          <div className="absolute top-1/2 left-1/2 h-[20px] w-[76px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black" />
-          <div className="flex items-center gap-1.5">
-            <SignalGlyph />
-            <WifiGlyph />
-            <BatteryGlyph />
+          <div className="relative flex items-center justify-between px-6 pb-1.5 text-[13px] font-semibold text-black">
+            <span>9:41</span>
+            <div className="absolute top-1/2 left-1/2 h-[20px] w-[76px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black" />
+            <div className="flex items-center gap-1.5">
+              <SignalGlyph />
+              <WifiGlyph />
+              <BatteryGlyph />
+            </div>
           </div>
         </div>
       )}
@@ -146,7 +154,10 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
       </div>
 
       {bezel && (
-        <div className="relative z-10 flex w-full shrink-0 items-center justify-center bg-white" style={{ height: HOME_INDICATOR_HEIGHT }}>
+        <div
+          className="relative z-10 flex w-full shrink-0 items-center justify-center bg-white/85 backdrop-blur-md"
+          style={{ height: HOME_INDICATOR_HEIGHT }}
+        >
           <div className="h-[4px] w-[110px] rounded-full bg-black/80" />
         </div>
       )}
