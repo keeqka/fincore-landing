@@ -67,15 +67,12 @@
 
 html {
   color-scheme: dark;
-  scroll-snap-type: y mandatory;
 }
 
-/* One block = one screen. scroll-snap-stop:always is the part that makes it
-   crisp — without it a fast flick can sail past a snap point entirely. */
+/* Anchor-link targets (nav links, "How it works") still need this so the
+   jump lands right below the fixed header instead of under it. */
 .block-snap {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  scroll-margin-top: 4.5rem; /* header height — so the snap point lands right below the fixed header, not under it */
+  scroll-margin-top: 4.5rem;
 }
 
 body {
