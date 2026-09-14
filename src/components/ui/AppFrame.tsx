@@ -67,7 +67,8 @@ export function AppFrame({ path, className }: { path: string; className?: string
                   aria-label="Try this screen"
                   className="group absolute inset-0 cursor-pointer bg-transparent"
                 >
-                  <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+                  {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI (this used to cover the tab bar's own labels). The middle of the screen is the one spot no route pins persistent chrome to. */}
+                  <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
                     Tap to try it
                   </span>
                 </button>
