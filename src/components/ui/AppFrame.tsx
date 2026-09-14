@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { BatteryFull, SignalHigh, Wifi } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
 /**
@@ -15,6 +16,14 @@ import { cn } from '../../lib/utils'
 const NATIVE_WIDTH = 375
 const NATIVE_HEIGHT = 812
 const STATUS_BAR_HEIGHT = 32
+// Reserved blank strip below the app's own content, bezel mode only. The
+// screen's corner radius (2.4rem in *frame* pixels) is much bigger in
+// *native* pixels once you divide out the scale-down factor — big enough
+// that the real app's bottom tab bar, sitting flush against the native
+// edge, had its outer icons/labels clipped by the curve. A real iPhone
+// reserves exactly this kind of home-indicator safe area at the bottom;
+// this fakes the same thing so the tab bar always clears the corner.
+const HOME_INDICATOR_HEIGHT = 56
 
 /**
  * Embeds a real screen of the actual product (built in mock-data mode, see
@@ -75,9 +84,20 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
       style={{ width: NATIVE_WIDTH, height: NATIVE_HEIGHT, transform: `scale(${scale})`, opacity: scale ? 1 : 0 }}
     >
       {bezel && (
-        // Status bar — reserved space, the island sits here, never over real content
-        <div className="relative z-10 flex w-full shrink-0 items-center justify-center bg-white" style={{ height: STATUS_BAR_HEIGHT }}>
-          <div className="h-[20px] w-[76px] rounded-full bg-black" />
+        // Status bar — reserved space, the island sits here, never over real content.
+        // Icons are static (always "9:41", full battery) — this is a fixed mockup, not
+        // a live device, and a real iPhone status bar always reads that way in marketing shots.
+        <div
+          className="relative z-10 flex w-full shrink-0 items-center justify-between bg-white px-6 text-[13px] font-semibold text-black"
+          style={{ height: STATUS_BAR_HEIGHT }}
+        >
+          <span>9:41</span>
+          <div className="absolute top-1/2 left-1/2 h-[20px] w-[76px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black" />
+          <div className="flex items-center gap-1.5">
+            <SignalHigh className="h-3.5 w-3.5" strokeWidth={2.5} />
+            <Wifi className="h-3.5 w-3.5" strokeWidth={2.5} />
+            <BatteryFull className="h-4 w-4" strokeWidth={2} />
+          </div>
         </div>
       )}
 
@@ -93,6 +113,12 @@ export function AppFrame({ path, className, bezel = true }: { path: string; clas
           className="h-full w-full border-0"
         />
       </div>
+
+      {bezel && (
+        <div className="relative z-10 flex w-full shrink-0 items-center justify-center bg-white" style={{ height: HOME_INDICATOR_HEIGHT }}>
+          <div className="h-[5px] w-[134px] rounded-full bg-black/80" />
+        </div>
+      )}
     </div>
   )
 
