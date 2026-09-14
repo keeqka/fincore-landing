@@ -113,11 +113,12 @@ export function AppFrame({ path, className }: { path: string; className?: string
                       }
                     }}
                     aria-label="Try this screen"
-                    className="absolute inset-0 cursor-pointer bg-black/15 transition-colors hover:bg-black/25"
+                    className="absolute inset-0 cursor-pointer"
                   >
                     {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI. The middle is the one spot no route pins persistent chrome to.
-                        Always visible, not hover-only — touch devices have no hover, so a hover-only hint would never show on the phones this is meant to represent. */}
-                    <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white backdrop-blur">
+                        Always visible, not hover-only — touch devices have no hover, so a hover-only hint would never show on the phones this is meant to represent.
+                        Only the badge itself carries a dark backing — tinting the whole screen behind it made the demo underneath look muddy/washed out. */}
+                    <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white shadow-lg backdrop-blur">
                       Tap to try it
                     </span>
                   </div>
