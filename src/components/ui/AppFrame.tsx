@@ -30,7 +30,7 @@ export function AppFrame({ path, className }: { path: string; className?: string
   return (
     <div
       className={cn(
-        'relative mx-auto w-[min(320px,calc(100vw-140px))] shrink-0 sm:w-[min(380px,calc(100vw-260px))]',
+        'relative mx-auto w-[min(230px,calc(100vw-140px))] shrink-0 sm:w-[min(280px,calc(100vw-260px))]',
         className,
       )}
     >
