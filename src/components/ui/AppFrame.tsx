@@ -18,7 +18,7 @@ export function AppFrame({ path, className }: { path: string; className?: string
   const [loaded, setLoaded] = useState(false)
 
   return (
-    <div className={cn('relative mx-auto w-[260px] shrink-0 sm:w-[280px]', className)}>
+    <div className={cn('relative mx-auto w-[300px] shrink-0 sm:w-[340px]', className)}>
       <div className="absolute -inset-4 rounded-[3.5rem] bg-gradient-to-b from-blue/20 to-purple/20 blur-2xl" aria-hidden />
 
       {/* Titanium-style edge — every decorative piece below is positioned relative to this one box. */}

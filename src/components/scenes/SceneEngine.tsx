@@ -20,7 +20,7 @@ export function SceneEngine() {
       description="Under the hood runs Claude, the model from Anthropic. It reads the whole document — a receipt, a payment screenshot, or a full month's bank statement — and turns it into structured data in seconds."
       tone="purple"
     >
-      <div className="grid gap-10 sm:grid-cols-[0.85fr_1.15fr] sm:items-center">
+      <div className="grid gap-10 sm:grid-cols-[auto_1fr] sm:items-center">
         <AppFrame path="/finances" />
 
         <Card className="p-6 sm:p-8">
