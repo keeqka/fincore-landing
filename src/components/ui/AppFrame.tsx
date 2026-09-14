@@ -14,19 +14,23 @@ import { cn } from '../../lib/utils'
  */
 const NATIVE_WIDTH = 375
 const NATIVE_HEIGHT = 812
+const STATUS_BAR_HEIGHT = 32
 
 /**
- * Embeds a real screen of the actual product (built in mock-data mode,
- * see public/app-demo) inside an iPhone 17-style bezel — not a hand-drawn
- * mockup, so it never drifts out of sync with the real UI after a redesign.
- * `path` is a route in that app, e.g. "/chat" or "/debts".
+ * Embeds a real screen of the actual product (built in mock-data mode, see
+ * public/app-demo) — not a hand-drawn mockup, so it never drifts out of
+ * sync with the real UI after a redesign. `path` is a route in that app,
+ * e.g. "/chat" or "/debts". Set `bezel={false}` for a plain rounded card
+ * with no iPhone chrome (no titanium edge, no Dynamic Island) — same glow,
+ * shadow, and tap-to-try behavior, just without the phone around it.
  *
- * The Dynamic Island lives in its own reserved status-bar strip above the
- * iframe, never on top of it — the embedded page has no way to reserve
- * safe-area space for a notch it doesn't know exists, so overlaying the
- * island directly on the iframe just covers real content (the app's own
- * header). Theme is pinned to light via ?theme=light so the screenshot
- * looks the same for every visitor regardless of their own OS preference.
+ * The Dynamic Island (bezel mode only) lives in its own reserved status-bar
+ * strip above the iframe, never on top of it — the embedded page has no way
+ * to reserve safe-area space for a notch it doesn't know exists, so
+ * overlaying the island directly on the iframe just covers real content
+ * (the app's own header). Theme is pinned to light via ?theme=light so the
+ * screenshot looks the same for every visitor regardless of their own OS
+ * preference.
  *
  * Click-to-activate (same pattern Google Maps embeds use): until clicked,
  * a translucent overlay sits in front of the iframe, so the visitor's
@@ -37,7 +41,7 @@ const NATIVE_HEIGHT = 812
  * A click "arms" it, restoring full clicking/scrolling inside the demo
  * until the cursor leaves the frame.
  */
-export function AppFrame({ path, className }: { path: string; className?: string }) {
+export function AppFrame({ path, className, bezel = true }: { path: string; className?: string; bezel?: boolean }) {
   const [loaded, setLoaded] = useState(false)
   const [active, setActive] = useState(false)
   const screenRef = useRef<HTMLDivElement>(null)
@@ -52,6 +56,71 @@ export function AppFrame({ path, className }: { path: string; className?: string
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
+
+  const screen = (
+    <div
+      className="absolute top-0 left-0 flex origin-top-left flex-col"
+      style={{ width: NATIVE_WIDTH, height: NATIVE_HEIGHT, transform: `scale(${scale})`, opacity: scale ? 1 : 0 }}
+    >
+      {bezel && (
+        // Status bar — reserved space, the island sits here, never over real content
+        <div className="relative z-10 flex w-full shrink-0 items-center justify-center bg-white" style={{ height: STATUS_BAR_HEIGHT }}>
+          <div className="h-[20px] w-[76px] rounded-full bg-black" />
+        </div>
+      )}
+
+      <div className="relative min-h-0 flex-1" onMouseLeave={() => setActive(false)}>
+        {!loaded && <div className="absolute inset-0 animate-pulse bg-white" />}
+        <iframe
+          src={`/app-demo/index.html?screen=${encodeURIComponent(path)}&theme=light`}
+          title={`FinCore AI — ${path}`}
+          loading="lazy"
+          tabIndex={-1}
+          onLoad={() => setLoaded(true)}
+          className={cn('h-full w-full border-0', !active && 'pointer-events-none')}
+        />
+        {!active && (
+          // A <div>, not a <button> — a native button here picked up the browser's
+          // default UA rendering/focus box, which showed through as square corners
+          // poking past this rounded screen. role="button" + a key handler keep it
+          // just as operable without any of that native chrome.
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => setActive(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setActive(true)
+              }
+            }}
+            aria-label="Try this screen"
+            className="absolute inset-0 cursor-pointer"
+          >
+            {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI. The middle is the one spot no route pins persistent chrome to.
+                Always visible, not hover-only — touch devices have no hover, so a hover-only hint would never show on the phones this is meant to represent.
+                Only the badge itself carries a dark backing — tinting the whole screen behind it made the demo underneath look muddy/washed out. */}
+            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white shadow-lg backdrop-blur">
+              Tap to try it
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+
+  if (!bezel) {
+    return (
+      <div className={cn('relative mx-auto w-[min(230px,calc(100vw-140px))] shrink-0 sm:w-[min(280px,calc(100vw-260px))]', className)}>
+        <div className="absolute -inset-3 rounded-[2.5rem] bg-gradient-to-b from-blue/20 to-purple/20 blur-2xl" aria-hidden />
+        {/* aspect-ratio lives on the same box scale is measured off, so the scaled content always
+            fits it exactly — see the bezel branch below for why that matters (it didn't, once). */}
+        <div ref={screenRef} className="relative aspect-[375/812] w-full overflow-hidden rounded-[1.75rem] bg-white shadow-2xl">
+          {screen}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -76,55 +145,8 @@ export function AppFrame({ path, className }: { path: string; className?: string
               sliver of this div's own white background exposed past the content's bottom edge —
               square corners poking out past the frame's rounded ones. */}
           <div ref={screenRef} className="relative aspect-[375/812] w-full overflow-hidden rounded-[2.4rem] bg-white">
-            {/* Scale is measured off THIS box, not a padded ancestor — the scaled child below must fit exactly inside it, or overflow-hidden clips a few px off every edge (it did: the leftmost/rightmost tab-bar icons were getting shaved off). */}
             {/* Rendered at native phone size, then scaled down as one unit to fit the frame — the app inside never sees a narrower viewport than a real phone actually has. */}
-            <div
-              className="absolute top-0 left-0 flex origin-top-left flex-col"
-              style={{ width: NATIVE_WIDTH, height: NATIVE_HEIGHT, transform: `scale(${scale})`, opacity: scale ? 1 : 0 }}
-            >
-              {/* Status bar — reserved space, the island sits here, never over real content */}
-              <div className="relative z-10 flex h-8 w-full shrink-0 items-center justify-center bg-white">
-                <div className="h-[20px] w-[76px] rounded-full bg-black" />
-              </div>
-
-              <div className="relative min-h-0 flex-1" onMouseLeave={() => setActive(false)}>
-                {!loaded && <div className="absolute inset-0 animate-pulse bg-white" />}
-                <iframe
-                  src={`/app-demo/index.html?screen=${encodeURIComponent(path)}&theme=light`}
-                  title={`FinCore AI — ${path}`}
-                  loading="lazy"
-                  tabIndex={-1}
-                  onLoad={() => setLoaded(true)}
-                  className={cn('h-full w-full border-0', !active && 'pointer-events-none')}
-                />
-                {!active && (
-                  // A <div>, not a <button> — a native button here picked up the browser's
-                  // default UA rendering/focus box, which showed through as square corners
-                  // poking past this rounded screen. role="button" + a key handler keep it
-                  // just as operable without any of that native chrome.
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => setActive(true)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        setActive(true)
-                      }
-                    }}
-                    aria-label="Try this screen"
-                    className="absolute inset-0 cursor-pointer"
-                  >
-                    {/* Dead center, not bottom — every embedded screen has its own fixed header and a bottom tab bar, so anywhere near an edge risks sitting on top of real UI. The middle is the one spot no route pins persistent chrome to.
-                        Always visible, not hover-only — touch devices have no hover, so a hover-only hint would never show on the phones this is meant to represent.
-                        Only the badge itself carries a dark backing — tinting the whole screen behind it made the demo underneath look muddy/washed out. */}
-                    <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-white shadow-lg backdrop-blur">
-                      Tap to try it
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
+            {screen}
           </div>
         </div>
       </div>
