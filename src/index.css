@@ -1,83 +1,55 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/geist';
-@import '@fontsource-variable/geist/wght-italic.css';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/jetbrains-mono';
 
 @theme {
-  --font-sans: 'Geist Variable', system-ui, sans-serif;
+  --font-sans: 'Space Grotesk Variable', Helvetica, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
-  --color-bg: #050509;
-  --color-bg-soft: #0a0a12;
-  --color-surface: #0d0e16;
-  --color-surface-2: #12131d;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.14);
-  --color-ink: #f3f2f7;
-  --color-muted: #8d8ba0;
-  --color-faint: #55536a;
+  /* бумага и свет */
+  --color-paper: #f7f5f1;
+  --color-card: #ffffff;
+  --color-receipt: #f6f1e8;
+  --color-tint: #ede9e1;
+  --color-line: #e4e0d8;
+  --color-line-warm: #e4ddd0;
 
-  --color-blue: #5b8cff;
-  --color-blue-soft: #8fb3ff;
-  --color-purple: #a15bff;
-  --color-purple-soft: #c79bff;
-  --color-green: #4ade80;
+  /* чернила */
+  --color-ink: #14171c;
+  --color-ink-strong: #191c21;
+  --color-ink-muted: #4a4740;
+  --color-ink-soft: #6b6558;
+  --color-ink-label: #7b7568;
 
-  --animate-scan: scan 2.6s ease-in-out infinite;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
-}
+  /* акцент: фон / текст-на-светлом / текст-на-тёмном */
+  --color-accent: #3c82c8;
+  --color-accent-hover: #2f6dac;
+  --color-accent-ink: #2c6497;
+  --color-accent-on-dark: #7fa9d4;
 
-@keyframes scan {
-  0% {
-    transform: translateY(-2%);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(102%);
-    opacity: 0;
-  }
-}
+  /* тревога и норма */
+  --color-warn: #c0632f;
+  --color-warn-ink: #a34e1f;
+  --color-warn-on-dark: #e08a4f;
+  --color-ok: #7fbf8e;
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes pulse-soft {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.08);
-  }
+  /* тёмные поверхности: чат-мок, тёмная секция */
+  --color-shell: #0f1319;
+  --color-dark: #191c21;
+  --color-dark-card: #22262d;
+  --color-dark-text: #f2efe9;
+  --color-dark-text-2: #e4e1db;
+  --color-dark-text-3: #a9a59c;
+  --color-dark-line: #2a3644;
 }
 
 html {
-  color-scheme: dark;
-}
-
-/* Anchor-link targets (nav links, "How it works") still need this so the
-   jump lands right below the fixed header instead of under it. */
-.block-snap {
-  scroll-margin-top: 4.5rem;
+  color-scheme: light;
 }
 
 body {
   margin: 0;
-  background: var(--color-bg);
+  background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -86,28 +58,29 @@ body {
   overflow-x: hidden;
 }
 
+a {
+  color: var(--color-accent-ink);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--color-ink);
+}
+
 ::selection {
-  background: var(--color-purple);
-  color: #08060d;
+  background: var(--color-accent);
+  color: #ffffff;
 }
 
-.text-balance {
-  text-wrap: balance;
+/* Цель якорных ссылок остаётся ниже фиксированной шапки */
+[id] {
+  scroll-margin-top: 5rem;
 }
 
-/* Fine noise texture so the flat dark background reads as premium, not flat */
-.bg-noise {
-  position: relative;
+html {
+  scroll-behavior: smooth;
 }
-.bg-noise::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-.glow-line {
-  background: linear-gradient(to bottom, transparent, var(--color-blue) 15%, var(--color-purple) 85%, transparent);
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

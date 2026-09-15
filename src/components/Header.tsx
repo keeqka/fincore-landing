@@ -1,33 +1,27 @@
-import { Sparkles } from 'lucide-react'
+import { MascotAvatar } from './ui/Mascot'
 import { Button } from './ui/Button'
 import { TELEGRAM_BOT_URL } from '../lib/constants'
 
 export function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-18 border-b border-border bg-bg/70 backdrop-blur-xl">
-      <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-        <a href="#top" className="flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight text-ink">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-blue to-purple">
-            <Sparkles className="h-4 w-4 text-white" />
-          </span>
-          FinCore AI
+    <header className="sticky top-0 z-50 border-b border-line bg-paper/85 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-4 px-4 py-3 sm:px-10">
+        <a href="#top" className="flex min-w-0 items-center gap-2.5 text-ink hover:text-ink">
+          <MascotAvatar size={34} />
+          <span className="text-[17px] font-medium tracking-tight">Hlow Flow</span>
         </a>
 
-        <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
-          <a href="#process" className="transition-colors hover:text-ink">
-            How it works
+        <nav className="flex items-center gap-5 sm:gap-6">
+          <a href="#how" className="hidden text-[15px] text-ink-muted hover:text-ink sm:inline">
+            Как работает
           </a>
-          <a href="#features" className="transition-colors hover:text-ink">
-            Features
+          <a href="#price" className="hidden text-[15px] text-ink-muted hover:text-ink sm:inline">
+            Цены
           </a>
-          <a href="#faq" className="transition-colors hover:text-ink">
-            FAQ
-          </a>
+          <Button href={TELEGRAM_BOT_URL} variant="accent" className="px-4 py-2.5 text-[15px]">
+            Открыть в Telegram
+          </Button>
         </nav>
-
-        <Button href={TELEGRAM_BOT_URL} className="!px-3.5 !py-2 text-xs sm:!px-5 sm:!py-2.5 sm:text-sm">
-          Open in Telegram
-        </Button>
       </div>
     </header>
   )

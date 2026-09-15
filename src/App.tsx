@@ -1,30 +1,25 @@
 import { Header } from './components/Header'
 import { Hero } from './components/Hero'
-import { ProcessTimeline } from './components/ProcessTimeline'
-import { SceneChaos } from './components/scenes/SceneChaos'
-import { SceneEngine } from './components/scenes/SceneEngine'
-import { SceneAdvisor } from './components/scenes/SceneAdvisor'
-import { SceneForecast } from './components/scenes/SceneForecast'
-import { SceneResult } from './components/scenes/SceneResult'
-import { FeaturesRecap } from './components/FeaturesRecap'
+import { HowItWorks } from './components/HowItWorks'
+import { ChatProof } from './components/ChatProof'
+import { Features } from './components/Features'
+import { DebtPlan } from './components/DebtPlan'
+import { Pricing } from './components/Pricing'
 import { FAQ } from './components/FAQ'
 import { FinalCTA } from './components/FinalCTA'
 import { Footer } from './components/Footer'
 
 function App() {
   return (
-    <div className="bg-noise min-h-screen bg-bg">
+    <div className="min-h-screen bg-paper">
       <Header />
       <main>
         <Hero />
-        <ProcessTimeline>
-          <SceneChaos />
-          <SceneEngine />
-          <SceneAdvisor />
-          <SceneForecast />
-          <SceneResult />
-        </ProcessTimeline>
-        <FeaturesRecap />
+        <HowItWorks />
+        <ChatProof />
+        <Features />
+        <DebtPlan />
+        <Pricing />
         <FAQ />
         <FinalCTA />
       </main>
