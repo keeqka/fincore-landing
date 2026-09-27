@@ -1,5 +1,6 @@
 import { Reveal } from './ui/Reveal'
 import { Button } from './ui/Button'
+import { TgStar } from './ui/TgStar'
 import { PRICE_KZT_APPROX, PRICE_STARS, TELEGRAM_REQUEST_URL } from '../lib/constants'
 
 const FREE = ['30 чеков в месяц', 'Бюджет и лимиты', 'Чат без ограничений по вопросам']
@@ -17,7 +18,7 @@ export function Pricing() {
       <div className="mx-auto flex max-w-[1120px] flex-col gap-7 px-4 py-14 sm:px-10 sm:py-20">
         <Reveal>
           <h2 className="text-[clamp(26px,4vw,40px)] font-medium tracking-[-0.02em]">Цены без сюрпризов</h2>
-          <p className="mt-2 text-[15px] text-ink-muted">Сейчас доступ по приглашениям — всё бесплатно. После открытия — так:</p>
+          <p className="mt-2 text-[15px] text-ink-muted">Сейчас доступ по приглашениям — всё бесплатно, а подписка — способ поддержать проект. После открытия — так:</p>
         </Reveal>
 
         <div className="grid gap-4.5 sm:grid-cols-2">
@@ -43,7 +44,10 @@ export function Pricing() {
               <span className="rounded-md bg-accent px-2 py-1 font-mono text-[11px] text-white">выбор 8 из 10</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-[38px] font-bold tracking-[-0.03em]">{PRICE_STARS} ⭐</span>
+              <span className="flex items-center gap-1.5 text-[38px] font-bold tracking-[-0.03em]">
+                {PRICE_STARS}
+                <TgStar size={32} />
+              </span>
               <span className="text-[15px] text-dark-text-3">в месяц</span>
             </div>
             <p className="-mt-2 text-[13px] text-dark-text-3">≈ {PRICE_KZT_APPROX} — точная сумма зависит от того, где покупаешь звёзды</p>
