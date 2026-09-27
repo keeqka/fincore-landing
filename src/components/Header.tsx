@@ -1,6 +1,6 @@
 import { MascotAvatar } from './ui/Mascot'
 import { Button } from './ui/Button'
-import { TELEGRAM_BOT_URL } from '../lib/constants'
+import { TELEGRAM_REQUEST_URL } from '../lib/constants'
 
 export function Header() {
   return (
@@ -18,8 +18,8 @@ export function Header() {
           <a href="#price" className="hidden text-[15px] text-ink-muted hover:text-ink sm:inline">
             Цены
           </a>
-          <Button href={TELEGRAM_BOT_URL} variant="accent" className="px-4 py-2.5 text-[15px]">
-            Открыть в Telegram
+          <Button href={TELEGRAM_REQUEST_URL} variant="accent" className="px-4 py-2.5 text-[15px]">
+            Получить доступ
           </Button>
         </nav>
       </div>

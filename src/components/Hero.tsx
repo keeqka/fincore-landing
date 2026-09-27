@@ -2,7 +2,7 @@ import { Reveal } from './ui/Reveal'
 import { Eyebrow } from './ui/Eyebrow'
 import { Button } from './ui/Button'
 import { Mascot } from './ui/Mascot'
-import { TELEGRAM_BOT_URL } from '../lib/constants'
+import { TELEGRAM_REQUEST_URL } from '../lib/constants'
 
 const CHIPS = ['фото чека', 'PDF-выписка', 'план погашения', 'лимиты по категориям']
 
@@ -19,8 +19,8 @@ export function Hero() {
           словами, а не таблицей. Без установки приложений.
         </p>
         <div className="flex flex-wrap items-center gap-3">
-          <Button href={TELEGRAM_BOT_URL}>Открыть в Telegram</Button>
-          <span className="text-sm text-ink-label">Бесплатно, 30 секунд на старт</span>
+          <Button href={TELEGRAM_REQUEST_URL}>Получить приглашение</Button>
+          <span className="text-sm text-ink-label">Сейчас — по приглашениям и бесплатно</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {CHIPS.map((c) => (

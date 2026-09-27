@@ -1,7 +1,7 @@
 import { Reveal } from './ui/Reveal'
 import { Button } from './ui/Button'
 import { Mascot } from './ui/Mascot'
-import { TELEGRAM_BOT_URL } from '../lib/constants'
+import { TELEGRAM_REQUEST_URL } from '../lib/constants'
 
 export function FinalCTA() {
   return (
@@ -14,10 +14,10 @@ export function FinalCTA() {
           Первый чек разберём прямо сейчас
         </h2>
         <p className="max-w-[40ch] text-[17px] leading-relaxed text-ink-muted text-pretty">
-          Ничего не устанавливать, ничего не подключать. Открываешь чат и кидаешь фото.
+          Ничего не устанавливать и не подключать. Пока доступ по приглашениям — оставь заявку в боте, ссылка придёт туда же.
         </p>
-        <Button href={TELEGRAM_BOT_URL} className="px-7 py-4">
-          Открыть в Telegram
+        <Button href={TELEGRAM_REQUEST_URL} className="px-7 py-4">
+          Получить приглашение
         </Button>
       </Reveal>
     </section>
