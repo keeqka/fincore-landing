@@ -58,12 +58,16 @@ body {
   overflow-x: hidden;
 }
 
-a {
-  color: var(--color-accent-ink);
-  text-decoration: none;
-}
-a:hover {
-  color: var(--color-ink);
+/* В @layer base, иначе безслойное a{color} бьёт утилиты Tailwind (text-white,
+   text-paper...) и текст на кнопках-ссылках красится в цвет ссылки. */
+@layer base {
+  a {
+    color: var(--color-accent-ink);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--color-ink);
+  }
 }
 
 ::selection {
