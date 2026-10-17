@@ -12,8 +12,21 @@ import { Support } from './components/Support'
 import { FAQ } from './components/FAQ'
 import { FinalCTA } from './components/FinalCTA'
 import { Footer } from './components/Footer'
+import { PrivacyPage } from './pages/PrivacyPage'
+import { SupportPage } from './pages/SupportPage'
+
+/** Роутинг без зависимостей: три пути, остальное ведёт на лендинг. */
+function route() {
+  const p = window.location.pathname.replace(/\/+$/, '')
+  if (p === '/privacy') return 'privacy'
+  if (p === '/support') return 'support'
+  return 'home'
+}
 
 function App() {
+  const r = route()
+  if (r === 'privacy') return <PrivacyPage />
+  if (r === 'support') return <SupportPage />
   return (
     <div className="min-h-screen bg-paper">
       <Header />
