@@ -1,4 +1,4 @@
-export const TELEGRAM_BOT_URL = 'https://t.me/aibasedfinancecontrolbot_bot'
+export const TELEGRAM_BOT_URL = 'https://t.me/hlowflow_bot'
 
 /** Доступ пока по приглашениям: /start request — бот передаёт заявку админу. */
 export const TELEGRAM_REQUEST_URL = `${TELEGRAM_BOT_URL}?start=request`
