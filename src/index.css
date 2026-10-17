@@ -41,6 +41,17 @@
   --color-dark-text-2: #e4e1db;
   --color-dark-text-3: #a9a59c;
   --color-dark-line: #2a3644;
+  --color-dark-accent: #8fb7dc;
+
+  /* добавлено в v2: синие градации, шкала статуса, заметки */
+  --color-accent-tint: #e7eff7;
+  --color-accent-soft: #c5d6e8;
+  --color-accent-mid: #8fafce;
+  --color-good: #4e9a5b;
+  --color-mid: #e3b341;
+  --color-bad: #d2553f;
+  --color-salmon: #f2a38f;
+  --color-note: #fff6e2;
 }
 
 html {

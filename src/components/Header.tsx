@@ -2,6 +2,15 @@ import { MascotAvatar } from './ui/Mascot'
 import { Button } from './ui/Button'
 import { TELEGRAM_REQUEST_URL } from '../lib/constants'
 
+const NAV = [
+  ['#input', 'Чеки и выписки'],
+  ['#chek', 'Чек'],
+  ['#budget', 'Бюджет'],
+  ['#debts', 'Долги'],
+  ['#learn', 'Грамотность'],
+  ['#family', 'Семья'],
+] as const
+
 export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-paper/85 backdrop-blur-xl">
@@ -10,16 +19,14 @@ export function Header() {
           <MascotAvatar size={34} />
           <span className="text-[17px] font-medium tracking-tight">Hlow Flow</span>
         </a>
-
-        <nav className="flex items-center gap-5 sm:gap-6">
-          <a href="#how" className="hidden text-[15px] text-ink-muted hover:text-ink sm:inline">
-            Как работает
-          </a>
-          <a href="#price" className="hidden text-[15px] text-ink-muted hover:text-ink sm:inline">
-            Цены
-          </a>
+        <nav className="flex items-center gap-5">
+          {NAV.map(([href, label]) => (
+            <a key={href} href={href} className="hidden text-[15px] text-ink-muted hover:text-ink lg:inline">
+              {label}
+            </a>
+          ))}
           <Button href={TELEGRAM_REQUEST_URL} variant="accent" className="px-4 py-2.5 text-[15px]">
-            Получить доступ
+            Открыть в Telegram
           </Button>
         </nav>
       </div>

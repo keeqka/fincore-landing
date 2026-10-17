@@ -2,9 +2,10 @@ import { Reveal } from './ui/Reveal'
 import { Eyebrow } from './ui/Eyebrow'
 import { Button } from './ui/Button'
 import { Mascot } from './ui/Mascot'
+import { Chip } from './ui/SectionHead'
 import { TELEGRAM_REQUEST_URL } from '../lib/constants'
 
-const CHIPS = ['фото чека', 'PDF-выписка', 'план погашения', 'лимиты по категориям']
+const CHIPS = ['фото чека', 'выписка за месяцы', 'дата свободы от долгов', 'бюджет на двоих']
 
 export function Hero() {
   return (
@@ -12,28 +13,36 @@ export function Hero() {
       <Reveal className="flex min-w-0 flex-col gap-6">
         <Eyebrow>Финансовый ИИ внутри Telegram</Eyebrow>
         <h1 className="text-[clamp(34px,6.2vw,62px)] leading-[1.03] font-bold tracking-[-0.03em] text-balance">
-          Кидаешь чек. Получаешь ответ, что с деньгами делать.
+          Одна цифра: сколько можно потратить сегодня.
         </h1>
         <p className="max-w-[46ch] text-[clamp(17px,2vw,21px)] leading-relaxed text-ink-muted text-pretty">
-          Hlow Flow читает чеки и выписки, собирает план погашения долгов и держит бюджет под присмотром. Объясняет
-          словами, а не таблицей. Без установки приложений.
+          Загружаешь чек или выписку, Hlow Flow вычитает обязательные платежи, считает дату свободы от долгов и
+          объясняет всё на твоих цифрах. Без установки и регистрации.
         </p>
         <div className="flex flex-wrap items-center gap-3">
-          <Button href={TELEGRAM_REQUEST_URL}>Получить приглашение</Button>
-          <span className="text-sm text-ink-label">Сейчас — по приглашениям и бесплатно</span>
+          <Button href={TELEGRAM_REQUEST_URL}>Открыть в Telegram</Button>
+          <span className="text-sm text-ink-label">Бесплатно · вход через Telegram</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {CHIPS.map((c) => (
-            <span key={c} className="rounded-lg bg-tint px-3 py-1.5 font-mono text-xs text-ink-muted">
-              {c}
-            </span>
+            <Chip key={c}>{c}</Chip>
           ))}
         </div>
       </Reveal>
 
       <Reveal delay={0.1} className="flex justify-center">
-        <div className="aspect-4/5 w-full max-w-[340px] rounded-[28px] bg-tint p-4">
-          <Mascot expression="calm" />
+        <div className="relative w-full max-w-[360px]">
+          <div className="aspect-4/5 w-full rounded-[28px] bg-tint p-4">
+            <Mascot expression="calm" />
+          </div>
+          <div className="absolute bottom-6 -left-3.5 flex min-w-[200px] flex-col gap-1.5 rounded-[18px] border border-line bg-card px-4 py-3.5 shadow-[0_12px_30px_rgba(20,23,28,0.10)]">
+            <div className="flex items-center gap-2">
+              <span className="size-2 rounded-full bg-good" />
+              <span className="text-[13px] text-ink-label">Можно сегодня</span>
+            </div>
+            <div className="text-[28px] font-bold tracking-[-0.02em]">8 400 ₸</div>
+            <div className="font-mono text-xs text-ink-label">до зарплаты 11 дней</div>
+          </div>
         </div>
       </Reveal>
     </section>
